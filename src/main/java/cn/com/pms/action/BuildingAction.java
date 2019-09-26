@@ -17,6 +17,7 @@ public class BuildingAction {
 	
 	@RequestMapping("/selectBuildByComm")
 	public @ResponseBody List<Building> selectBuildByComm(int commId) {
+        //hahah
 		List<Building> buildList = buildingService.selectBuildByComm(commId);
 		return buildList;
 	}
