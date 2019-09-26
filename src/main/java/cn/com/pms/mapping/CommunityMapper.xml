@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pms.dao.CommunityMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.pms.model.Community" >
+    <id column="community_id" property="communityId" jdbcType="INTEGER" />
+    <result column="community_name" property="communityName" jdbcType="NVARCHAR" />
+    <result column="community_buildingingnum" property="communityBuildingingnum" jdbcType="INTEGER" />
+    <result column="community_address" property="communityAddress" jdbcType="NVARCHAR" />
+    <result column="community_manager" property="communityManager" jdbcType="NVARCHAR" />
+    <result column="community_manager_link" property="communityManagerLink" jdbcType="VARCHAR" />
+    <result column="community_area" property="communityArea" jdbcType="DECIMAL" />
+    <result column="community_createtime" property="communityCreatetime" jdbcType="DATE" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    community_id, community_name, community_buildingingnum, community_address, community_manager, 
+    community_manager_link, community_area, community_createtime
+  </sql>
+  
+  <!-- 查询所有社区信息 -->
+  <select id="selectCommList" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List" />
+    from community
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from community
+  </select>
+  <select id="getAll" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" /> from community
+  </select>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from community
+    where community_id = #{communityId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from community
+    where community_id = #{communityId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.com.pms.model.Community" >
+    insert into community (community_id, community_name, community_buildingingnum, 
+      community_address, community_manager, community_manager_link, 
+      community_area, community_createtime)
+    values (#{communityId,jdbcType=INTEGER}, #{communityName,jdbcType=NVARCHAR}, #{communityBuildingingnum,jdbcType=INTEGER}, 
+      #{communityAddress,jdbcType=NVARCHAR}, #{communityManager,jdbcType=NVARCHAR}, #{communityManagerLink,jdbcType=VARCHAR}, 
+      #{communityArea,jdbcType=DECIMAL}, #{communityCreatetime,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.pms.model.Community" >
+    insert into community
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="communityId != null" >
+        community_id,
+      </if>
+      <if test="communityName != null" >
+        community_name,
+      </if>
+      <if test="communityBuildingingnum != null" >
+        community_buildingingnum,
+      </if>
+      <if test="communityAddress != null" >
+        community_address,
+      </if>
+      <if test="communityManager != null" >
+        community_manager,
+      </if>
+      <if test="communityManagerLink != null" >
+        community_manager_link,
+      </if>
+      <if test="communityArea != null" >
+        community_area,
+      </if>
+      <if test="communityCreatetime != null" >
+        community_createtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="communityId != null" >
+        #{communityId,jdbcType=INTEGER},
+      </if>
+      <if test="communityName != null" >
+        #{communityName,jdbcType=NVARCHAR},
+      </if>
+      <if test="communityBuildingingnum != null" >
+        #{communityBuildingingnum,jdbcType=INTEGER},
+      </if>
+      <if test="communityAddress != null" >
+        #{communityAddress,jdbcType=NVARCHAR},
+      </if>
+      <if test="communityManager != null" >
+        #{communityManager,jdbcType=NVARCHAR},
+      </if>
+      <if test="communityManagerLink != null" >
+        #{communityManagerLink,jdbcType=VARCHAR},
+      </if>
+      <if test="communityArea != null" >
+        #{communityArea,jdbcType=DECIMAL},
+      </if>
+      <if test="communityCreatetime != null" >
+        #{communityCreatetime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.pms.model.Community" >
+    update community
+    <set >
+      <if test="communityName != null" >
+        community_name = #{communityName,jdbcType=NVARCHAR},
+      </if>
+      <if test="communityBuildingingnum != null" >
+        community_buildingingnum = #{communityBuildingingnum,jdbcType=INTEGER},
+      </if>
+      <if test="communityAddress != null" >
+        community_address = #{communityAddress,jdbcType=NVARCHAR},
+      </if>
+      <if test="communityManager != null" >
+        community_manager = #{communityManager,jdbcType=NVARCHAR},
+      </if>
+      <if test="communityManagerLink != null" >
+        community_manager_link = #{communityManagerLink,jdbcType=VARCHAR},
+      </if>
+      <if test="communityArea != null" >
+        community_area = #{communityArea,jdbcType=DECIMAL},
+      </if>
+      <if test="communityCreatetime != null" >
+        community_createtime = #{communityCreatetime,jdbcType=DATE},
+      </if>
+    </set>
+    where community_id = #{communityId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.pms.model.Community" >
+    update community
+    set community_name = #{communityName,jdbcType=NVARCHAR},
+      community_buildingingnum = #{communityBuildingingnum,jdbcType=INTEGER},
+      community_address = #{communityAddress,jdbcType=NVARCHAR},
+      community_manager = #{communityManager,jdbcType=NVARCHAR},
+      community_manager_link = #{communityManagerLink,jdbcType=VARCHAR},
+      community_area = #{communityArea,jdbcType=DECIMAL},
+      community_createtime = #{communityCreatetime,jdbcType=DATE}
+    where community_id = #{communityId,jdbcType=INTEGER}
+  </update>
+</mapper>

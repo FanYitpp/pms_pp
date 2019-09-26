@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pms.dao.StyleMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.pms.model.Style" >
+    <id column="style_id" property="styleId" jdbcType="INTEGER" />
+    <result column="style_name" property="styleName" jdbcType="NVARCHAR" />
+    <result column="style_area" property="styleArea" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    style_id, style_name, style_area
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from style
+    where style_id = #{styleId,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from style
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from style
+    where style_id = #{styleId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.com.pms.model.Style" >
+    insert into style (style_id, style_name, style_area
+      )
+    values (#{styleId,jdbcType=INTEGER}, #{styleName,jdbcType=NVARCHAR}, #{styleArea,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.pms.model.Style" >
+    insert into style
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="styleId != null" >
+        style_id,
+      </if>
+      <if test="styleName != null" >
+        style_name,
+      </if>
+      <if test="styleArea != null" >
+        style_area,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="styleId != null" >
+        #{styleId,jdbcType=INTEGER},
+      </if>
+      <if test="styleName != null" >
+        #{styleName,jdbcType=NVARCHAR},
+      </if>
+      <if test="styleArea != null" >
+        #{styleArea,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.pms.model.Style" >
+    update style
+    <set >
+      <if test="styleName != null" >
+        style_name = #{styleName,jdbcType=NVARCHAR},
+      </if>
+      <if test="styleArea != null" >
+        style_area = #{styleArea,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where style_id = #{styleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.pms.model.Style" >
+    update style
+    set style_name = #{styleName,jdbcType=NVARCHAR},
+      style_area = #{styleArea,jdbcType=DECIMAL}
+    where style_id = #{styleId,jdbcType=INTEGER}
+  </update>
+</mapper>

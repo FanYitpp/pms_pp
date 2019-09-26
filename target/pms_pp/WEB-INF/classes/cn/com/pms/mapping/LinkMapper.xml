@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pms.dao.LinkMapper" >
+  <select id="selectAll" parameterType="cn.com.pms.model.Linkget" resultType="java.util.Map">
+  	select u.unit_name,h.house_name,ho.host_name,c.consume_count,c.consume_time,ci.costitem_name  
+	from community comm,building b,unit u,house h,host ho,consume c,costitem ci 
+	where comm.community_id=b.building_community_id and b.building_id=u.unit_building_id and u.unit_id=h.house_unit_id and ho.host_id=h.house_host_id and h.house_id=c.consume_house_id and c.consume_costitem_id=ci.costitem_id
+	<if test="communityId != null and communityId!=0">
+	 and comm.community_id=#{communityId} 
+	</if>
+	<if test="buildingId != null and buildingId!=0">
+	 and b.building_id=#{buildingId} 
+	</if>
+	<if test="unitId != null and unitId!=0">
+	 and u.unit_id=#{unitId} 
+	</if>
+	<if test="houseId != null and houseId!=0">
+	 and h.house_id=#{houseId}
+	</if>
+	<if test="houseNumber!=null and houseNumber!=''">
+	  and h.house_number=#{houseNumber}
+	</if>
+	<if test="hostName!=null and hostName!=''">
+	 and ho.host_name=#{hostName}
+	</if>
+	<if test="costitemId != null and costitemId!=0">
+	 and ci.costitem_id=#{costitemId} 
+	</if>
+	<if test="firsttime != null">
+	 and c.consume_time &gt; #{firsttime } 
+	</if>
+	<if test="lasttime != null">
+	 and c.consume_time &lt; #{lasttime} 
+	</if>
+	order by house_id offset #{pagesize}*#{pagenum} rows
+	fetch next #{pagenum} rows only;
+  </select>
+  
+  <select id="selectcount" parameterType="cn.com.pms.model.Linkget" resultType="java.lang.Integer">
+  select COUNT(c.consume_id) from community comm,building b,unit u,house h,host ho,consume c,costitem ci 
+	where comm.community_id=b.building_community_id and b.building_id=u.unit_building_id and u.unit_id=h.house_unit_id and ho.host_id=h.house_host_id and h.house_id=c.consume_house_id and c.consume_costitem_id=ci.costitem_id
+	<if test="communityId != null and communityId!=0">
+	 and comm.community_id=#{communityId} 
+	</if>
+	<if test="buildingId != null and buildingId!=0">
+	 and b.building_id=#{buildingId} 
+	</if>
+	<if test="unitId != null and unitId!=0">
+	 and u.unit_id=#{unitId} 
+	</if>
+	<if test="houseId != null and houseId!=0">
+	 and h.house_id=#{houseId}
+	</if>
+	<if test="houseNumber!=null and houseNumber!=''">
+	  and h.house_number=#{houseNumber}
+	</if>
+	<if test="hostName!=null and hostName!=''">
+	 and ho.host_name=#{hostName}
+	</if>
+	<if test="costitemId != null and costitemId!=0">
+	 and ci.costitem_id=#{costitemId} 
+	</if>
+	<if test="firsttime != null">
+	 and c.consume_time &gt; #{firsttime } 
+	</if>
+	<if test="lasttime != null">
+	 and c.consume_time &lt; #{lasttime} 
+	</if>
+  </select>
+</mapper>

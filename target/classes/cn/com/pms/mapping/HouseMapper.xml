@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pms.dao.HouseMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.pms.model.House" >
+    <id column="house_id" property="houseId" jdbcType="INTEGER" />
+    <result column="house_name" property="houseName" jdbcType="INTEGER" />
+    <result column="house_number" property="houseNumber" jdbcType="INTEGER" />
+    <result column="house_host_id" property="houseHostId" jdbcType="INTEGER" />
+    <result column="house_style_id" property="houseStyleId" jdbcType="INTEGER" />
+    <result column="house_type" property="houseType" jdbcType="INTEGER" />
+    <result column="house_unit_id" property="houseUnitId" jdbcType="INTEGER" />
+    <result column="house_balance" property="houseBalance" jdbcType="DECIMAL" />
+    <result column="house_createtime" property="houseCreatetime" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    house_id, house_name, house_number, house_host_id, house_style_id, house_type, house_unit_id, 
+    house_balance, house_createtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from house
+    where house_id = #{houseId,jdbcType=INTEGER}
+  </select>
+  
+  
+    <select id="selectAllByUnit" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from house
+    where house_unit_id = #{houseUnitId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByHouseNumber" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from house
+    where house_number = #{houseId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByUnitId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select 
+  	<include refid="Base_Column_List" /> 
+  	from house where house_unit_id = #{houseUnitId,jdbcType=INTEGER}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from house
+    where house_id = #{houseId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.com.pms.model.House" >
+    insert into house (house_id, house_name, house_number, 
+      house_host_id, house_style_id, house_type, 
+      house_unit_id, house_balance, house_createtime
+      )
+    values (#{houseId,jdbcType=INTEGER}, #{houseName,jdbcType=INTEGER}, #{houseNumber,jdbcType=INTEGER}, 
+      #{houseHostId,jdbcType=INTEGER}, #{houseStyleId,jdbcType=INTEGER}, #{houseType,jdbcType=INTEGER}, 
+      #{houseUnitId,jdbcType=INTEGER}, #{houseBalance,jdbcType=DECIMAL}, #{houseCreatetime,jdbcType=DATE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.pms.model.House" >
+    insert into house
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="houseId != null" >
+        house_id,
+      </if>
+      <if test="houseName != null" >
+        house_name,
+      </if>
+      <if test="houseNumber != null" >
+        house_number,
+      </if>
+      <if test="houseHostId != null" >
+        house_host_id,
+      </if>
+      <if test="houseStyleId != null" >
+        house_style_id,
+      </if>
+      <if test="houseType != null" >
+        house_type,
+      </if>
+      <if test="houseUnitId != null" >
+        house_unit_id,
+      </if>
+      <if test="houseBalance != null" >
+        house_balance,
+      </if>
+      <if test="houseCreatetime != null" >
+        house_createtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="houseId != null" >
+        #{houseId,jdbcType=INTEGER},
+      </if>
+      <if test="houseName != null" >
+        #{houseName,jdbcType=INTEGER},
+      </if>
+      <if test="houseNumber != null" >
+        #{houseNumber,jdbcType=INTEGER},
+      </if>
+      <if test="houseHostId != null" >
+        #{houseHostId,jdbcType=INTEGER},
+      </if>
+      <if test="houseStyleId != null" >
+        #{houseStyleId,jdbcType=INTEGER},
+      </if>
+      <if test="houseType != null" >
+        #{houseType,jdbcType=INTEGER},
+      </if>
+      <if test="houseUnitId != null" >
+        #{houseUnitId,jdbcType=INTEGER},
+      </if>
+      <if test="houseBalance != null" >
+        #{houseBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="houseCreatetime != null" >
+        #{houseCreatetime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.pms.model.House" >
+    update house
+    <set >
+      <if test="houseName != null" >
+        house_name = #{houseName,jdbcType=INTEGER},
+      </if>
+      <if test="houseNumber != null" >
+        house_number = #{houseNumber,jdbcType=INTEGER},
+      </if>
+      <if test="houseHostId != null" >
+        house_host_id = #{houseHostId,jdbcType=INTEGER},
+      </if>
+      <if test="houseStyleId != null" >
+        house_style_id = #{houseStyleId,jdbcType=INTEGER},
+      </if>
+      <if test="houseType != null" >
+        house_type = #{houseType,jdbcType=INTEGER},
+      </if>
+      <if test="houseUnitId != null" >
+        house_unit_id = #{houseUnitId,jdbcType=INTEGER},
+      </if>
+      <if test="houseBalance != null" >
+        house_balance = #{houseBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="houseCreatetime != null" >
+        house_createtime = #{houseCreatetime,jdbcType=DATE},
+      </if>
+    </set>
+    where house_id = #{houseId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.pms.model.House" >
+    update house
+    set house_name = #{houseName,jdbcType=INTEGER},
+      house_number = #{houseNumber,jdbcType=INTEGER},
+      house_host_id = #{houseHostId,jdbcType=INTEGER},
+      house_style_id = #{houseStyleId,jdbcType=INTEGER},
+      house_type = #{houseType,jdbcType=INTEGER},
+      house_unit_id = #{houseUnitId,jdbcType=INTEGER},
+      house_balance = #{houseBalance,jdbcType=DECIMAL},
+      house_createtime = #{houseCreatetime,jdbcType=DATE}
+    where house_id = #{houseId,jdbcType=INTEGER}
+  </update>
+</mapper>

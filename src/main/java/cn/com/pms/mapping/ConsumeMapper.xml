@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pms.dao.ConsumeMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.pms.model.Consume" >
+    <id column="consume_id" property="consumeId" jdbcType="INTEGER" />
+    <result column="consume_house_id" property="consumeHouseId" jdbcType="INTEGER" />
+    <result column="consume_count" property="consumeCount" jdbcType="DECIMAL" />
+    <result column="consume_totalprice" property="consumeTotalprice" jdbcType="DECIMAL" />
+    <result column="consume_time" property="consumeTime" jdbcType="DATE" />
+    <result column="consume_status" property="consumeStatus" jdbcType="INTEGER" />
+    <result column="consume_pay_time" property="consumePayTime" jdbcType="TIMESTAMP" />
+    <result column="consume_costitem_id" property="consumeCostitemId" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    consume_id, consume_house_id, consume_count, consume_totalprice, consume_time, consume_status, 
+    consume_pay_time, consume_costitem_id
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from consume
+    where consume_id = #{consumeId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from consume
+    where consume_id = #{consumeId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.com.pms.model.Consume" >
+    insert into consume (consume_id, consume_house_id, consume_count, 
+      consume_totalprice, consume_time, consume_status, 
+      consume_pay_time, consume_costitem_id)
+    values (#{consumeId,jdbcType=INTEGER}, #{consumeHouseId,jdbcType=INTEGER}, #{consumeCount,jdbcType=DECIMAL}, 
+      #{consumeTotalprice,jdbcType=DECIMAL}, #{consumeTime,jdbcType=DATE}, #{consumeStatus,jdbcType=INTEGER}, 
+      #{consumePayTime,jdbcType=TIMESTAMP}, #{consumeCostitemId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.pms.model.Consume" >
+    insert into consume
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="consumeId != null" >
+        consume_id,
+      </if>
+      <if test="consumeHouseId != null" >
+        consume_house_id,
+      </if>
+      <if test="consumeCount != null" >
+        consume_count,
+      </if>
+      <if test="consumeTotalprice != null" >
+        consume_totalprice,
+      </if>
+      <if test="consumeTime != null" >
+        consume_time,
+      </if>
+      <if test="consumeStatus != null" >
+        consume_status,
+      </if>
+      <if test="consumePayTime != null" >
+        consume_pay_time,
+      </if>
+      <if test="consumeCostitemId != null" >
+        consume_costitem_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="consumeId != null" >
+        #{consumeId,jdbcType=INTEGER},
+      </if>
+      <if test="consumeHouseId != null" >
+        #{consumeHouseId,jdbcType=INTEGER},
+      </if>
+      <if test="consumeCount != null" >
+        #{consumeCount,jdbcType=DECIMAL},
+      </if>
+      <if test="consumeTotalprice != null" >
+        #{consumeTotalprice,jdbcType=DECIMAL},
+      </if>
+      <if test="consumeTime != null" >
+        #{consumeTime,jdbcType=DATE},
+      </if>
+      <if test="consumeStatus != null" >
+        #{consumeStatus,jdbcType=INTEGER},
+      </if>
+      <if test="consumePayTime != null" >
+        #{consumePayTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="consumeCostitemId != null" >
+        #{consumeCostitemId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.pms.model.Consume" >
+    update consume
+    <set >
+      <if test="consumeHouseId != null" >
+        consume_house_id = #{consumeHouseId,jdbcType=INTEGER},
+      </if>
+      <if test="consumeCount != null" >
+        consume_count = #{consumeCount,jdbcType=DECIMAL},
+      </if>
+      <if test="consumeTotalprice != null" >
+        consume_totalprice = #{consumeTotalprice,jdbcType=DECIMAL},
+      </if>
+      <if test="consumeTime != null" >
+        consume_time = #{consumeTime,jdbcType=DATE},
+      </if>
+      <if test="consumeStatus != null" >
+        consume_status = #{consumeStatus,jdbcType=INTEGER},
+      </if>
+      <if test="consumePayTime != null" >
+        consume_pay_time = #{consumePayTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="consumeCostitemId != null" >
+        consume_costitem_id = #{consumeCostitemId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where consume_id = #{consumeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.pms.model.Consume" >
+    update consume
+    set consume_house_id = #{consumeHouseId,jdbcType=INTEGER},
+      consume_count = #{consumeCount,jdbcType=DECIMAL},
+      consume_totalprice = #{consumeTotalprice,jdbcType=DECIMAL},
+      consume_time = #{consumeTime,jdbcType=DATE},
+      consume_status = #{consumeStatus,jdbcType=INTEGER},
+      consume_pay_time = #{consumePayTime,jdbcType=TIMESTAMP},
+      consume_costitem_id = #{consumeCostitemId,jdbcType=INTEGER}
+    where consume_id = #{consumeId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据房间编号查询用户费用明细 -->
+  <select id="queryConsumeInfoByHouseNumber" resultType="map"  parameterType="map">
+	select h.house_number,cos.*,con.consume_count,cos.costitem_price*con.consume_count allPrice,consume_time,consume_status
+	from consume con
+	left join costitem cos on cos.costitem_id = con.consume_costitem_id
+	left join house h on con.consume_house_id = h.house_id
+	<where>
+		<if test="houseNumber != null and houseNumber != '' " >and h.house_number = #{houseNumber}</if>
+		<if test="beginTime != null and beginTime != '' " >and consume_time &gt;= #{beginTime}</if>
+		<if test="endTime != null and endTime != '' " >and consume_time &lt;= #{endTime}</if>
+	</where>
+	order by h.house_number desc,consume_time desc
+	offset #{currPageNo}*#{perPageSize} rows
+	fetch next #{perPageSize} rows only;
+  </select>
+  
+  <!-- 根据房间编号查询用户费用明细==用户折线图显示 -->
+  <select id="displayChartByConsumeInfo" resultType="map"  parameterType="map">
+	  select h.house_number,costitem_name,cos.costitem_price*con.consume_count value,consume_time
+		from consume con
+		left join costitem cos on cos.costitem_id = con.consume_costitem_id
+		left join house h on con.consume_house_id = h.house_id
+		<where>
+			<if test="costitemId != null and costitemId != '' " >and cos.costitem_id = #{costitemId}</if>
+			<if test="houseNumber != null and houseNumber != '' " >and h.house_number = #{houseNumber}</if>
+			<if test="beginTime != null and beginTime != '' " >and consume_time &gt;= #{beginTime}</if>
+			<if test="endTime != null and endTime != '' " >and consume_time &lt;= #{endTime}</if>
+		</where>
+		order by consume_time asc
+  </select>
+  
+  <!-- 根据房间编号查询用户费用明细数据条数 -->
+  <select id="queryConsumeInfoByHouseNumberCount" resultType="java.lang.Integer"  parameterType="map">
+	select count(h.house_number)
+	from consume con
+	left join costitem cos on cos.costitem_id = con.consume_costitem_id
+	left join house h on con.consume_house_id = h.house_id
+	<where>
+		<if test="houseNumber != null and houseNumber != '' " >and h.house_number = #{houseNumber}</if>
+		<if test="beginTime != null and beginTime != '' " >and consume_time &gt;= #{beginTime}</if>
+		<if test="endTime != null and endTime != '' " >and consume_time &lt;= #{endTime}</if>
+	</where>
+  </select>
+  
+  <!-- 常规费用统计 -->
+  <select id="queryStatisticsConsume" resultType="map" parameterType="map">
+  	select sc.hnum,sc.host_name,sc.host_link,
+	sum(case when sc.costitem_id=1 then allPrice end) as 'peopertyAll',
+	sum(case when sc.costitem_id=1 and consume_status=1 then allPrice end) as 'peopertyYes',
+	sum(case when sc.costitem_id=1 and consume_status=0 then allPrice end) as 'peopertyNo',
+	sum(case when sc.costitem_id=3 then allPrice end) as 'sanitationAll',
+	sum(case when sc.costitem_id=3 and consume_status=1 then allPrice end) as 'sanitationYes',
+	sum(case when sc.costitem_id=3 and consume_status=0 then allPrice end) as 'sanitationNo',
+	sum(case when sc.costitem_id=5 then allPrice end) as 'heatingAll',
+	sum(case when sc.costitem_id=5 and consume_status=1 then allPrice end) as 'heatingYes',
+	sum(case when sc.costitem_id=5 and consume_status=0 then allPrice end) as 'heatingNo',
+	sum(case when sc.costitem_id=7 then allPrice end) as 'waterAll',
+	sum(case when sc.costitem_id=7 and consume_status=1 then allPrice end) as 'waterYes',
+	sum(case when sc.costitem_id=7 and consume_status=0 then allPrice end) as 'waterNo',
+	sum(case when sc.costitem_id=8 then allPrice end) as 'electricAll',
+	sum(case when sc.costitem_id=8 and consume_status=1 then allPrice end) as 'electricYes',
+	sum(case when sc.costitem_id=8 and consume_status=0 then allPrice end) as 'electricNo',
+	sum(case when sc.costitem_id=9 then allPrice end) as 'sewageAll',
+	sum(case when sc.costitem_id=9 and consume_status=1 then allPrice end) as 'sewageYes',
+	sum(case when sc.costitem_id=9 and consume_status=0 then allPrice end) as 'sewageNo'
+	from 
+		(
+				select hou.hhid,hou.hnum,hou.hname,host.host_name,host.host_link,hou.htime,hou.uname,hou.costitem_id,hou.costitem_name,hou.allPrice,hou.consume_time,hou.consume_status
+				from host
+				right join
+				(
+					select h.house_host_id hhid,h.house_number hnum,h.house_name hname,h.house_createtime htime,u.unit_name uname,cos.costitem_id,cos.costitem_name,cos.costitem_price*con.consume_count as allPrice,con.consume_time,con.consume_status
+					from house h
+					left join unit u on h.house_unit_id = u.unit_id
+					left join building b on u.unit_building_id = b.building_id
+					left join community c on b.building_community_id = c.community_id
+					right join consume con on con.consume_house_id = h.house_id
+					left join costitem cos on con.consume_costitem_id = cos.costitem_id
+					<where>
+						<if test="commId != null" > and c.community_id=#{commId} </if>
+						<if test="buildId != null" > and b.building_id=#{buildId} </if>
+						<if test="unitId != null" >  and u.unit_id=#{unitId} </if>
+						 and h.house_host_id is not null
+					</where>
+				) hou on host.host_id = hou.hhid
+		) sc
+	<where>
+		<if test="beginTime != null and endTime != '' ">and sc.consume_time &gt;= #{beginTime} </if>
+		<if test="endTime != null and endTime != '' ">and sc.consume_time &lt;= #{endTime} </if>
+	</where>
+	group by sc.hnum,sc.host_name,sc.host_link
+	order by sc.hnum
+	offset #{page}*#{rows} rows
+	fetch next #{rows} rows only;
+  </select>
+  
+  
+  <!-- 查询统计数量 -->
+  <select id="queryStatisticsConsumeCount" parameterType="map" resultType="java.lang.Integer">
+  	select count(hnum)
+	from (
+	select hnum
+		from 
+			(
+					select hou.hhid,hou.hnum,hou.consume_time
+					from host
+					right join
+					(
+						select h.house_host_id hhid,h.house_number hnum,con.consume_time
+						from house h
+						left join unit u on h.house_unit_id = u.unit_id
+						left join building b on u.unit_building_id = b.building_id
+						left join community c on b.building_community_id = c.community_id
+						right join consume con on con.consume_house_id = h.house_id
+						left join costitem cos on con.consume_costitem_id = cos.costitem_id
+						<where>
+							<if test="commId != null" > and c.community_id=#{commId} </if>
+							<if test="buildId != null" > and b.building_id=#{buildId} </if>
+							<if test="unitId != null" >  and u.unit_id=#{unitId} </if>
+							 and h.house_host_id is not null
+						</where>
+					) hou on host.host_id = hou.hhid
+			) sc
+		<where>
+			<if test="beginTime != null and endTime != '' ">and sc.consume_time &gt;= #{beginTime} </if>
+			<if test="endTime != null and endTime != '' ">and sc.consume_time &lt;= #{endTime} </if>
+		</where>
+		group by sc.hnum
+		) number
+  </select>
+  
+  
+  <!--常规费用查询==用于导出数据-->
+  <select id="selectAllConsumeInfo" parameterType="map" resultType="map">
+  	select sc.hnum,sc.host_name,sc.host_link,
+	sum(case when sc.costitem_id=1 then allPrice end) as 'peopertyAll',
+	sum(case when sc.costitem_id=1 and consume_status=1 then allPrice end) as 'peopertyYes',
+	sum(case when sc.costitem_id=1 and consume_status=0 then allPrice end) as 'peopertyNo',
+	sum(case when sc.costitem_id=3 then allPrice end) as 'sanitationAll',
+	sum(case when sc.costitem_id=3 and consume_status=1 then allPrice end) as 'sanitationYes',
+	sum(case when sc.costitem_id=3 and consume_status=0 then allPrice end) as 'sanitationNo',
+	sum(case when sc.costitem_id=5 then allPrice end) as 'heatingAll',
+	sum(case when sc.costitem_id=5 and consume_status=1 then allPrice end) as 'heatingYes',
+	sum(case when sc.costitem_id=5 and consume_status=0 then allPrice end) as 'heatingNo',
+	sum(case when sc.costitem_id=7 then allPrice end) as 'waterAll',
+	sum(case when sc.costitem_id=7 and consume_status=1 then allPrice end) as 'waterYes',
+	sum(case when sc.costitem_id=7 and consume_status=0 then allPrice end) as 'waterNo',
+	sum(case when sc.costitem_id=8 then allPrice end) as 'electricAll',
+	sum(case when sc.costitem_id=8 and consume_status=1 then allPrice end) as 'electricYes',
+	sum(case when sc.costitem_id=8 and consume_status=0 then allPrice end) as 'electricNo',
+	sum(case when sc.costitem_id=9 then allPrice end) as 'sewageAll',
+	sum(case when sc.costitem_id=9 and consume_status=1 then allPrice end) as 'sewageYes',
+	sum(case when sc.costitem_id=9 and consume_status=0 then allPrice end) as 'sewageNo'
+	from 
+		(
+				select hou.hhid,hou.hnum,hou.hname,host.host_name,host.host_link,hou.htime,hou.uname,hou.costitem_id,hou.costitem_name,hou.allPrice,hou.consume_time,hou.consume_status
+				from host
+				right join
+				(
+					select h.house_host_id hhid,h.house_number hnum,h.house_name hname,h.house_createtime htime,u.unit_name uname,cos.costitem_id,cos.costitem_name,cos.costitem_price*con.consume_count as allPrice,	con.consume_time,con.consume_status
+					from house h
+					left join unit u on h.house_unit_id = u.unit_id
+					left join building b on u.unit_building_id = b.building_id
+					left join community c on b.building_community_id = c.community_id
+					right join consume con on con.consume_house_id = h.house_id
+					left join costitem cos on con.consume_costitem_id = cos.costitem_id
+					<where>
+						<if test="commId != null" > and c.community_id=#{commId} </if>
+						<if test="buildId != null" > and b.building_id=#{buildId} </if>
+						<if test="unitId != null" >  and u.unit_id=#{unitId} </if>
+						 and h.house_host_id is not null
+					</where>
+				) hou on host.host_id = hou.hhid
+		) sc
+	<where>
+		<if test="beginTime != null and endTime != '' ">and sc.consume_time &gt;= #{beginTime} </if>
+		<if test="endTime != null and endTime != '' ">and sc.consume_time &lt;= #{endTime} </if>
+	</where>
+	group by sc.hnum,sc.host_name,sc.host_link
+	order by sc.hnum
+  </select>
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pms.dao.CostitemMapper" >
+
+  <resultMap id="BaseResultMap" type="cn.com.pms.model.Costitem" >
+    <id column="costitem_id" property="costitemId" jdbcType="INTEGER" />
+    <result column="costitem_name" property="costitemName" jdbcType="NVARCHAR" />
+    <result column="costitem_unit" property="costitemUnit" jdbcType="NVARCHAR" />
+    <result column="costitem_price" property="costitemPrice" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    costitem_id, costitem_name, costitem_unit, costitem_price
+  </sql>
+  
+  
+  <select id="selectCostitemList" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List" />
+  	from costitem
+  </select>
+  
+  
+  <insert id="addCostitem" parameterType="cn.com.pms.model.Costitem">
+  	insert into costitem(costitem_name, costitem_unit, costitem_price)
+  	values(#{costitemName},#{costitemUnit},#{costitemPrice})
+  </insert>
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from costitem
+    where costitem_id = #{costitemId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getAll" resultMap="BaseResultMap">
+  select * from costitem
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from costitem
+    where costitem_id = #{costitemId,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="cn.com.pms.model.Costitem" >
+    insert into costitem (costitem_id, costitem_name, costitem_unit, 
+      costitem_price)
+    values (#{costitemId,jdbcType=INTEGER}, #{costitemName,jdbcType=NVARCHAR}, #{costitemUnit,jdbcType=NVARCHAR}, 
+      #{costitemPrice,jdbcType=DECIMAL})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="cn.com.pms.model.Costitem" >
+    insert into costitem
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="costitemId != null" >
+        costitem_id,
+      </if>
+      <if test="costitemName != null" >
+        costitem_name,
+      </if>
+      <if test="costitemUnit != null" >
+        costitem_unit,
+      </if>
+      <if test="costitemPrice != null" >
+        costitem_price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="costitemId != null" >
+        #{costitemId,jdbcType=INTEGER},
+      </if>
+      <if test="costitemName != null" >
+        #{costitemName,jdbcType=NVARCHAR},
+      </if>
+      <if test="costitemUnit != null" >
+        #{costitemUnit,jdbcType=NVARCHAR},
+      </if>
+      <if test="costitemPrice != null" >
+        #{costitemPrice,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.pms.model.Costitem" >
+    update costitem
+    <set >
+      <if test="costitemName != null" >
+        costitem_name = #{costitemName,jdbcType=NVARCHAR},
+      </if>
+      <if test="costitemUnit != null" >
+        costitem_unit = #{costitemUnit,jdbcType=NVARCHAR},
+      </if>
+      <if test="costitemPrice != null" >
+        costitem_price = #{costitemPrice,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where costitem_id = #{costitemId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="cn.com.pms.model.Costitem" >
+    update costitem
+    set costitem_name = #{costitemName,jdbcType=NVARCHAR},
+      costitem_unit = #{costitemUnit,jdbcType=NVARCHAR},
+      costitem_price = #{costitemPrice,jdbcType=DECIMAL}
+    where costitem_id = #{costitemId,jdbcType=INTEGER}
+  </update>
+  
+  
+</mapper>

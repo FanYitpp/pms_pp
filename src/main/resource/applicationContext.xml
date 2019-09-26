@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:p="http://www.springframework.org/schema/p"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:oxm="http://www.springframework.org/schema/oxm"
+	   xsi:schemaLocation="http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-4.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+
+    <!-- 配置数据源，记得去掉mybatis-config.xml的数据源相关配置  210.43.7.101-->
+    <bean id="comboPooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+         <property name="driverClass" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+         <property name="jdbcUrl" value="jdbc:sqlserver://192.168.0.155:1433;databaseName = pms"/>
+         <property name="user" value="sa"/>
+         <property name="password" value="m123"/>
+         
+         <property name="acquireIncrement" value="2"/>
+         <property name="initialPoolSize" value="5"/>
+         <property name="minPoolSize" value="1"/>
+         <property name="maxPoolSize" value="5"/>
+    </bean>
+    
+    <!-- 配置session工厂 -->
+	<bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!--指定mybatis全局配置文件的位置-->
+		<property name="configLocation" value="classpath:myBatis-config.xml"></property>
+		<property name="dataSource" ref="comboPooledDataSource"></property>
+		<!--指定mybatis。mapper文件的位置-->
+		<property name="mapperLocations" value="classpath:cn/com/pms/mapping/*.xml"></property>
+	</bean>
+	<!--配置扫描器。将mybatis接口的实现加入到ioc容器中-->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!--扫描所有的dao接口实现，加入到ioc容器中-->
+		<property name="basePackage" value="cn.com.pms.dao"></property>
+	</bean>
+    
+    <!-- 配置事务管理器，管理数据源事务处理 -->
+    <bean id="dataSourceTransactionManager" class=" org.springframework.jdbc.datasource.DataSourceTransactionManager">
+         <property name="dataSource" ref="comboPooledDataSource"/>
+    </bean>
+    
+    <!-- 配置事务通知 -->
+    <tx:advice id="tx" transaction-manager=" ">
+    	   <tx:attributes>
+    	   		<!-- 默认只处理运行时异常，可加rollback-for="Exception/Throwable"处理所有异常或错误 -->
+    	       <tx:method name="add*" propagation="REQUIRED" rollback-for="Exception/Throwable"/>
+    	       <tx:method name="delete*" propagation="REQUIRED" rollback-for="Exception/Throwable"/>
+    	       <tx:method name="update*" propagation="REQUIRED" rollback-for="Exception/Throwable"/>
+    	       <tx:method name="*" propagation="SUPPORTS"/>
+    	   </tx:attributes>
+    </tx:advice>
+    
+    <!-- 配置切面织入的范围，后边要把事务边界定在service层 -->
+	<aop:config>
+		<aop:pointcut expression="execution(* cn.com.pms.service.impl.*.*(..))" id="pointcut"/>
+
+		<aop:advisor advice-ref="tx" pointcut-ref="pointcut"/>
+	</aop:config>
+    
+    <!-- 配置sessionTemplate，已经封装了繁琐的数据操作  这里没用-->
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" >
+		<constructor-arg name="sqlSessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<!-- 自动扫描组件，要把controller去除，他们是在spring-mvc.xml中配置，如果不去除会影响事务管理 -->
+	<context:component-scan base-package="cn.com.pms">
+	 	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+      
+      
+    <!-- 配置转换器，对于在basepackage设置的包下的接口类
+    	如果接口类的全类名在Mapper.xml文件中定义过且和命名空间一致，将被转换成spring的bean,
+    	再调用的地方通过@Autowired方式可以注入接口实例 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    	<property name="basePackage" value="cn.com.pms.dao"></property>
+    </bean>
+    	
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver ">
+		<property name="prefix" value="/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+	
+</beans>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pms.dao.HostMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.pms.model.Host" >
+    <id column="host_id" property="hostId" jdbcType="INTEGER" />
+    <result column="host_name" property="hostName" jdbcType="NVARCHAR" />
+    <result column="host_gender" property="hostGender" jdbcType="NVARCHAR" />
+    <result column="host_link" property="hostLink" jdbcType="VARCHAR" />
+    <result column="host_link2" property="hostLink2" jdbcType="VARCHAR" />
+    <result column="host_card" property="hostCard" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    host_id, host_name, host_gender, host_link, host_link2, host_card
+  </sql>
+  
+  <!-- 根据主键查询信息 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from host
+    where host_id = #{hostId,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 查询所有信息 -->
+  <select id="selectHostInfo" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from host
+  </select>
+  
+  <!-- 分页查询业主信息 -->
+  <select id="selectHostInfoPage" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select <include refid="Base_Column_List" /> from host
+	order by host_id 
+	offset #{currPageNo}*#{perPageSize} rows
+	fetch next #{perPageSize} rows only;
+  </select>
+  
+  <!-- 查询总记录数 -->
+  <select id="selectHostCount" resultType="java.lang.Integer">
+  	select count(host_id) from host;
+  </select>
+  
+  <!-- 根据小区，楼宇，单元 和业主姓名查询信息 -->
+  <select id="selectHostByCond" resultType="map" parameterType="map">
+  	select host.*,hou.hname,hou.hnum,hou.uname,hou.htime from
+	host, (
+		select h.house_host_id hhid,h.house_number hnum,h.house_name hname,h.house_createtime htime,u.unit_name uname from house h
+		left join unit u on h.house_unit_id = u.unit_id
+		left join building b on u.unit_building_id = b.building_id
+		left join community c on b.building_community_id = c.community_id
+		<where>
+			<if test="commId != null" > and c.community_id=#{commId} </if>
+			<if test="buildId != null" > and b.building_id=#{buildId} </if>
+			<if test="unitId != null" >  and u.unit_id=#{unitId} </if>
+			 and h.house_host_id is not null
+		</where>
+	) hou
+	where host.host_id = hou.hhid <if test="hostName != null" >  and host.host_name like '%'+#{hostName}+'%' </if>
+	order by host_id 
+	offset #{currPageNo}*#{perPageSize} rows
+	fetch next #{perPageSize} rows only;
+  </select>
+  
+  <!-- 根据条件 查询信息数量 -->
+  <select id="selectHostByCondPage" resultType="java.lang.Integer" parameterType="map">
+  	select count(hou.hhid) from
+	host, (
+		select h.house_host_id hhid from house h
+		left join unit u on h.house_unit_id = u.unit_id
+		left join building b on u.unit_building_id = b.building_id
+		left join community c on b.building_community_id = c.community_id
+		<where>
+			<if test="commId != null" > and c.community_id=#{commId} </if>
+			<if test="buildId != null" > and b.building_id=#{buildId} </if>
+			<if test="unitId != null" >  and u.unit_id=#{unitId} </if>
+			 and h.house_host_id is not null
+		</where>
+	) hou
+	where host.host_id = hou.hhid <if test="hostName != null" >  and host.host_name like '%'+#{hostName}+'%' </if>
+  </select>
+  
+  <!-- 根据房间编号查询业主信息 -->
+  <select id="selectHostByHouseNumber" resultType="map" parameterType="string">
+  	select host.*,hou.hname,hou.hnum,hou.uname,hou.htime from
+	host, (
+		select h.house_host_id hhid,h.house_number hnum,h.house_name hname,h.house_createtime htime,u.unit_name uname from house h
+		left join unit u on h.house_unit_id = u.unit_id
+		left join building b on u.unit_building_id = b.building_id
+		left join community c on b.building_community_id = c.community_id
+		where h.house_number = #{houseNumber}
+	) hou
+	where host.host_id = hou.hhid
+  </select>
+  
+  <!-- 根据小区，楼宇，单元 和业主姓名查询信息，用于导出数据 -->
+  <select id="selectAllHostInfo" resultType="map" parameterType="map">
+  	select host.*,hou.hname,hou.hnum,hou.uname,hou.htime from
+	host, (
+		select h.house_host_id hhid,h.house_number hnum,h.house_name hname,h.house_createtime htime,u.unit_name uname from house h
+		left join unit u on h.house_unit_id = u.unit_id
+		left join building b on u.unit_building_id = b.building_id
+		left join community c on b.building_community_id = c.community_id
+		<where>
+			<if test="commId != null" > and c.community_id=#{commId} </if>
+			<if test="buildId != null" > and b.building_id=#{buildId} </if>
+			<if test="unitId != null" >  and u.unit_id=#{unitId} </if>
+			 and h.house_host_id is not null
+		</where>
+	) hou
+	where host.host_id = hou.hhid <if test="hostName != null" >  and host.host_name like '%'+#{hostName}+'%' </if>
+  </select>
+  
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from host
+    where host_id = #{hostId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.com.pms.model.Host" >
+    insert into host (host_id, host_name, host_gender, 
+      host_link, host_link2, host_card
+      )
+    values (#{hostId,jdbcType=INTEGER}, #{hostName,jdbcType=NVARCHAR}, #{hostGender,jdbcType=NVARCHAR}, 
+      #{hostLink,jdbcType=VARCHAR}, #{hostLink2,jdbcType=VARCHAR}, #{hostCard,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.pms.model.Host" >
+    insert into host
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="hostId != null" >
+        host_id,
+      </if>
+      <if test="hostName != null" >
+        host_name,
+      </if>
+      <if test="hostGender != null" >
+        host_gender,
+      </if>
+      <if test="hostLink != null" >
+        host_link,
+      </if>
+      <if test="hostLink2 != null" >
+        host_link2,
+      </if>
+      <if test="hostCard != null" >
+        host_card,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="hostId != null" >
+        #{hostId,jdbcType=INTEGER},
+      </if>
+      <if test="hostName != null" >
+        #{hostName,jdbcType=NVARCHAR},
+      </if>
+      <if test="hostGender != null" >
+        #{hostGender,jdbcType=NVARCHAR},
+      </if>
+      <if test="hostLink != null" >
+        #{hostLink,jdbcType=VARCHAR},
+      </if>
+      <if test="hostLink2 != null" >
+        #{hostLink2,jdbcType=VARCHAR},
+      </if>
+      <if test="hostCard != null" >
+        #{hostCard,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.pms.model.Host" >
+    update host
+    <set >
+      <if test="hostName != null" >
+        host_name = #{hostName,jdbcType=NVARCHAR},
+      </if>
+      <if test="hostGender != null" >
+        host_gender = #{hostGender,jdbcType=NVARCHAR},
+      </if>
+      <if test="hostLink != null" >
+        host_link = #{hostLink,jdbcType=VARCHAR},
+      </if>
+      <if test="hostLink2 != null" >
+        host_link2 = #{hostLink2,jdbcType=VARCHAR},
+      </if>
+      <if test="hostCard != null" >
+        host_card = #{hostCard,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where host_id = #{hostId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.pms.model.Host" >
+    update host
+    set host_name = #{hostName,jdbcType=NVARCHAR},
+      host_gender = #{hostGender,jdbcType=NVARCHAR},
+      host_link = #{hostLink,jdbcType=VARCHAR},
+      host_link2 = #{hostLink2,jdbcType=VARCHAR},
+      host_card = #{hostCard,jdbcType=VARCHAR}
+    where host_id = #{hostId,jdbcType=INTEGER}
+  </update>
+</mapper>

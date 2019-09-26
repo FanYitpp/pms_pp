@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pms.dao.BuildingMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.pms.model.Building" >
+    <id column="building_id" property="buildingId" jdbcType="INTEGER" />
+    <result column="building_name" property="buildingName" jdbcType="NVARCHAR" />
+    <result column="building_unitnum" property="buildingUnitnum" jdbcType="INTEGER" />
+    <result column="building_floornum" property="buildingFloornum" jdbcType="INTEGER" />
+    <result column="building_community_id" property="buildingCommunityId" jdbcType="INTEGER" />
+    <result column="building_createtime" property="buildingCreatetime" jdbcType="DATE" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    building_id, building_name, building_unitnum, building_floornum, building_community_id, 
+    building_createtime
+  </sql>
+  
+  <!-- 根据小区查询楼房信息 -->
+  <select id="selectBuildByComm" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select 
+  	<include refid="Base_Column_List" /> 
+  	from building where building_community_id = #{commId};
+  </select>
+  
+  
+    <select id="selectAllByComm" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select 
+    <include refid="Base_Column_List" />
+    from building
+     where  building_community_id = #{buildingCommunityId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByCommunityId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  select building_id, building_name from building where building_community_id=#{buildingCommunityId,jdbcType=INTEGER}
+  </select>
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from building
+    where building_id = #{buildingId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from building
+    where building_id = #{buildingId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.com.pms.model.Building" >
+    insert into building (building_id, building_name, building_unitnum, 
+      building_floornum, building_community_id, 
+      building_createtime)
+    values (#{buildingId,jdbcType=INTEGER}, #{buildingName,jdbcType=NVARCHAR}, #{buildingUnitnum,jdbcType=INTEGER}, 
+      #{buildingFloornum,jdbcType=INTEGER}, #{buildingCommunityId,jdbcType=INTEGER}, 
+      #{buildingCreatetime,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.pms.model.Building" >
+    insert into building
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="buildingId != null" >
+        building_id,
+      </if>
+      <if test="buildingName != null" >
+        building_name,
+      </if>
+      <if test="buildingUnitnum != null" >
+        building_unitnum,
+      </if>
+      <if test="buildingFloornum != null" >
+        building_floornum,
+      </if>
+      <if test="buildingCommunityId != null" >
+        building_community_id,
+      </if>
+      <if test="buildingCreatetime != null" >
+        building_createtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="buildingId != null" >
+        #{buildingId,jdbcType=INTEGER},
+      </if>
+      <if test="buildingName != null" >
+        #{buildingName,jdbcType=NVARCHAR},
+      </if>
+      <if test="buildingUnitnum != null" >
+        #{buildingUnitnum,jdbcType=INTEGER},
+      </if>
+      <if test="buildingFloornum != null" >
+        #{buildingFloornum,jdbcType=INTEGER},
+      </if>
+      <if test="buildingCommunityId != null" >
+        #{buildingCommunityId,jdbcType=INTEGER},
+      </if>
+      <if test="buildingCreatetime != null" >
+        #{buildingCreatetime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.pms.model.Building" >
+    update building
+    <set >
+      <if test="buildingName != null" >
+        building_name = #{buildingName,jdbcType=NVARCHAR},
+      </if>
+      <if test="buildingUnitnum != null" >
+        building_unitnum = #{buildingUnitnum,jdbcType=INTEGER},
+      </if>
+      <if test="buildingFloornum != null" >
+        building_floornum = #{buildingFloornum,jdbcType=INTEGER},
+      </if>
+      <if test="buildingCommunityId != null" >
+        building_community_id = #{buildingCommunityId,jdbcType=INTEGER},
+      </if>
+      <if test="buildingCreatetime != null" >
+        building_createtime = #{buildingCreatetime,jdbcType=DATE},
+      </if>
+    </set>
+    where building_id = #{buildingId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.pms.model.Building" >
+    update building
+    set building_name = #{buildingName,jdbcType=NVARCHAR},
+      building_unitnum = #{buildingUnitnum,jdbcType=INTEGER},
+      building_floornum = #{buildingFloornum,jdbcType=INTEGER},
+      building_community_id = #{buildingCommunityId,jdbcType=INTEGER},
+      building_createtime = #{buildingCreatetime,jdbcType=DATE}
+    where building_id = #{buildingId,jdbcType=INTEGER}
+  </update>
+</mapper>
